@@ -15,3 +15,6 @@ Gameplay:
 UI:
 * High Scores Screen
 * Pause Menu
+
+Performance:
+* Add proper loading screen while loading level.
