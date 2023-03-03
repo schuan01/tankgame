@@ -1,6 +1,6 @@
 # Tank Game Prototype by Juan Volpe
 
-This is a fast prototype created in just 1 labor day using Unreal Engine 5.1 with BP and C++
+This is a fast prototype created in just 8 hours using Unreal Engine 5.1 with BP and C++
 
 For faster iteration on Gameplay, I started everything in BP and I will be moving the logic to C++.
 
