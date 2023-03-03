@@ -8,6 +8,8 @@
 #include "TankGameCharacter.generated.h"
 
 
+class ATankProjectile;
+
 UCLASS(config=Game)
 class ATankGameCharacter : public ACharacter
 {
@@ -20,14 +22,22 @@ class ATankGameCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Spawns, meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* SpawnLoc;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gun, meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* GunCenter;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gun, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* TankGun;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Body, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* TankBody;
 	
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* DefaultMappingContext;
-
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* JumpAction;
 
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -37,17 +47,42 @@ class ATankGameCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
+	/** Move Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* ShootProjectileAction;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ATankProjectile> TankProjectileClass;
+
+	UPROPERTY()
+	TObjectPtr<APlayerController> WeakPlayerController;
+
 public:
 	ATankGameCharacter();
+
+	UFUNCTION(BlueprintCallable)
+	bool GetIsCurrentlyPlaying() const { return bIsCurrentlyPlaying; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetIsCurrentlyPlaying(bool bIsPlaying) { bIsCurrentlyPlaying = bIsPlaying; }
 	
 
 protected:
+
+	bool bIsCurrentlyPlaying = false;
+
+	
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+
+	void ShootProjectile();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void BP_ShootProjectile();
 			
 
 protected:
@@ -56,6 +91,8 @@ protected:
 	
 	// To add mapping context
 	virtual void BeginPlay();
+
+	virtual void Tick(float DeltaSeconds) override;
 
 public:
 	/** Returns CameraBoom subobject **/

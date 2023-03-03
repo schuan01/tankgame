@@ -11,8 +11,8 @@ class ATankGameGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-public:
-	ATankGameGameMode();
+	virtual void BeginPlay() override;
+	
 };
 
 
