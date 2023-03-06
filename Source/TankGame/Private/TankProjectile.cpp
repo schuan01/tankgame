@@ -3,25 +3,44 @@
 
 #include "TankProjectile.h"
 
+#include "Enemy.h"
+
 // Sets default values
 ATankProjectile::ATankProjectile()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+	RootMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RootMesh"));
+	RootMesh->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
 void ATankProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if (RootMesh)
+	{
+		RootMesh->OnComponentHit.AddDynamic(this, &ATankProjectile::OnHitCallback);
+	}
 }
 
-// Called every frame
-void ATankProjectile::Tick(float DeltaTime)
+void ATankProjectile::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Super::Tick(DeltaTime);
+	if (RootMesh)
+	{
+		RootMesh->OnComponentHit.RemoveAll(this);
+	}
+	
+	Super::EndPlay(EndPlayReason);
+}
 
+void ATankProjectile::OnHitCallback(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+                                    FVector NormalImpulse, const FHitResult& Hit)
+{
+	if(AEnemy* Enemy = Cast<AEnemy>(OtherActor))
+	{
+		Enemy->DestroyEnemy();
+	}
+
+	Destroy();
 }
 
